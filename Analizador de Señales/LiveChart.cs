@@ -38,6 +38,11 @@ namespace Analizador_de_Señales
         }
         private const int tileheight = 30;
 
+        private int maxtile
+        {
+            get { return this.Width / (tilewidth + 1); }
+        }
+
         private void LiveChart_Load(object sender, EventArgs e)
         {
              color1 = new SolidBrush(Color.LightGray);
@@ -85,46 +90,19 @@ namespace Analizador_de_Señales
 
         private void ScrollOne(int step, bool addrender = true)
         {
-            if (addrender)
-                rendercount -= step;
-            if (Animate)
-                Task.Run(() =>
-                {
-                    int max = tilewidth + 1;
-                    int pro = 0;
-                    Delegate d = (MethodInvoker)delegate
-                    {
-                        pro += step;
-                        picSeries.Left += step;
-                    };
-                    while (Math.Abs(pro) < max)
-                    {
-                        picSeries.Invoke(d);
-                        System.Threading.Thread.Sleep(2);
-                    }
-                });
-            else
-                picSeries.Left += (tilewidth + 1) * step;
+            start += step;
             this.Refresh();
         }
 
         private void Lseries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            int precount = count;
             count = Series[0].values.Count;
-            var m = (MethodInvoker)delegate
-            {
-                picSeries.Width = (int)(count * (tilewidth + 1));
-            };
 
-            if (picSeries.InvokeRequired)
-            {
-                picSeries.Invoke(m);
-            }
-            else
-            {
-                m.Invoke();
-            }
-            
+            int step = precount > count ? -1 : 1;
+
+            start += step;
+            ScrollOne(step);
 
             if (watchcoll)
             {
@@ -134,14 +112,15 @@ namespace Analizador_de_Señales
 
         private void LiveChart_Paint(object sender, PaintEventArgs e)
         {
-            
+            Draw(e.Graphics);
         }
 
         public void Draw(Graphics g)
         {
-            Console.WriteLine(picSeries.Left);
-            int width = (int)(tilewidth);
-            //count = this.Width / width + 1;
+            Console.WriteLine(start);
+
+            rendercount = this.Width / (tilewidth + 1) + 1;
+
             bool highlighted = false;
             if (Series.First().values.Any() && hoverIndex > -1)
             {
@@ -152,7 +131,8 @@ namespace Analizador_de_Señales
                 }
             }
 
-            int st = (Math.Abs(picSeries.Left) - this.Width) / (tilewidth - 1); 
+            int st = count - rendercount;
+            st = st < 0 ? 0 : st; 
 
             bool a = false;
             for (int vi = (st % 2 == 0 ? st : st - 1); vi < count && vi < start + rendercount; vi++)
@@ -186,7 +166,7 @@ namespace Analizador_de_Señales
                         if (s.values[vi])
                         {
                             //rects.Add(new Rectangle(relvi * (width + 1), i * (30 + 1), width, 30));
-                            g.FillRectangle(vi == hoverIndex ? bh : b, new RectangleF(vi * (width + 1), i * (tileheight + 1), width, tileheight));
+                            g.FillRectangle(vi == hoverIndex ? bh : b, new RectangleF(vi * (tilewidth + 1), i * (tileheight + 1), tilewidth, tileheight));
                         }
                     }
                 }
@@ -210,9 +190,6 @@ namespace Analizador_de_Señales
             count = 0;
             rendercount = 0;
             start = 0;
-
-            picSeries.Left = 0;
-            picSeries.Width = this.Width;
 
             //Clear series
             Task.Run(() =>
@@ -284,7 +261,8 @@ namespace Analizador_de_Señales
             if (drag)
             {
                 int diff = e.Location.X - startP.X;
-                picSeries.Left += diff;
+                int step = diff / (tilewidth + 1);
+                start += step;
                 acum += diff;
 
                 if (!RealTime)
@@ -338,7 +316,7 @@ namespace Analizador_de_Señales
 
         public void ScrollToEnd()
         {
-            picSeries.Left = Series[0].values.Count * -(tilewidth + 1) + this.Width;
+            start = count - maxtile + 1;
         }
 
         public void AddOneSeries(TimeSpan elapsed, bool scroll = true)
@@ -357,7 +335,7 @@ namespace Analizador_de_Señales
             rendercount++;
             watchcoll = true;
 
-            if (scroll && picSeries.Width + picSeries.Left >= this.Width)
+            if (scroll && start + count > maxtile)
                 ScrollOne(-1);
         }
         public void AddOneSeries(bool on, int snum, TimeSpan elapsed, bool scroll = true)
@@ -373,7 +351,7 @@ namespace Analizador_de_Señales
             rendercount++;
             watchcoll = true;
 
-            if (scroll && picSeries.Width + picSeries.Left >= this.Width)
+            if (scroll && start + count > maxtile)
                 ScrollOne(-1);
         }
         public void AddOneSeries(bool[] state, TimeSpan elapsed, bool scroll = true)
@@ -387,7 +365,7 @@ namespace Analizador_de_Señales
             rendercount++;
             watchcoll = true;
 
-            if (scroll && picSeries.Width + picSeries.Left >= this.Width)
+            if (scroll && start + count > maxtile)
                 ScrollOne(-1);
         }
     }
