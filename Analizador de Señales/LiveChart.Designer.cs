@@ -30,12 +30,19 @@
         {
             this.components = new System.ComponentModel.Container();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.timerPerf = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // toolTip1
             // 
             this.toolTip1.UseAnimation = false;
             this.toolTip1.UseFading = false;
+            // 
+            // timerPerf
+            // 
+            this.timerPerf.Enabled = true;
+            this.timerPerf.Interval = 1000;
+            this.timerPerf.Tick += new System.EventHandler(this.timerPerf_Tick);
             // 
             // LiveChart
             // 
@@ -49,6 +56,8 @@
             this.Load += new System.EventHandler(this.LiveChart_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.LiveChart_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LiveChart_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picSeries_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picSeries_MouseUp);
             this.Resize += new System.EventHandler(this.LiveChart_Resize);
             this.ResumeLayout(false);
 
@@ -56,5 +65,6 @@
 
         #endregion
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Timer timerPerf;
     }
 }

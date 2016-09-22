@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Analizador_de_Señales
 {
@@ -18,7 +19,9 @@ namespace Analizador_de_Señales
             InitializeComponent();
         }
 
-        public int start, count, rendercount;
+        public int start, count, rendercount, offset;
+        public List<float> timesBetweenFrames = new List<float>();
+        public float perfomance = 0.0f;
         public double scale = 0.5f;
         public Series[] Series { get; private set; } = new Series[8];
         public bool RealTime { get; set; } = true;
@@ -45,10 +48,11 @@ namespace Analizador_de_Señales
 
         private void LiveChart_Load(object sender, EventArgs e)
         {
+            Color c2 = addColor(Color.LightGray, 25);
              color1 = new SolidBrush(Color.LightGray);
-             color2 = new SolidBrush(addColor(Color.LightGray, 15, 15, 15));
-            hcolor1 = new SolidBrush(addColor(Color.LightGray, 25, 25, 25));
-            hcolor2 = new SolidBrush(addColor(Color.LightGray, 40, 40, 40));
+             color2 = new SolidBrush(c2);
+            hcolor1 = new SolidBrush(addColor(Color.LightGray, 15));
+            hcolor2 = new SolidBrush(addColor(c2, 15));
 
             for (int i = 0; i < 8; i++)
             {
@@ -88,21 +92,31 @@ namespace Analizador_de_Señales
             }
         }
 
-        private void ScrollOne(int step, bool addrender = true)
+        private void ScrollOne(int step, bool addrender = true, bool force = false)
         {
-            start += step;
-            this.Refresh();
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate { ScrollOne(step, addrender); });
+            }
+            else
+            {
+                if (!(Series[0].values.Count > maxtile && !force))
+                {
+                    Console.WriteLine("scroll " + step);
+                    start += step;
+                    offset += step;
+                    this.Refresh();
+                }
+            }
         }
 
         private void Lseries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             int precount = count;
             count = Series[0].values.Count;
-
-            int step = precount > count ? -1 : 1;
-
-            start += step;
-            ScrollOne(step);
+            
+            start = count - maxtile;
+            ScrollOne(-1);
 
             if (watchcoll)
             {
@@ -115,13 +129,13 @@ namespace Analizador_de_Señales
             Draw(e.Graphics);
         }
 
+        Stopwatch sw = new Stopwatch();
         public void Draw(Graphics g)
         {
-            Console.WriteLine(start);
-
+            sw.Restart();
             rendercount = this.Width / (tilewidth + 1) + 1;
 
-            bool highlighted = false;
+            /*bool highlighted = false;
             if (Series.First().values.Any() && hoverIndex > -1)
             {
                 int si = mousePos.Y / (tileheight + 1);
@@ -129,7 +143,7 @@ namespace Analizador_de_Señales
                 {
                     highlighted = true;
                 }
-            }
+            }*/
 
             int st = count - rendercount;
             st = st < 0 ? 0 : st; 
@@ -138,7 +152,7 @@ namespace Analizador_de_Señales
             for (int vi = (st % 2 == 0 ? st : st - 1); vi < count && vi < start + rendercount; vi++)
             {
                 Brush b;
-                if (highlighted)
+                if (hoverIndex == vi)
                 {
                     b = a ? hcolor1 : hcolor2;
                 }
@@ -147,7 +161,7 @@ namespace Analizador_de_Señales
                     b = a ? color1 : color2;
                 }
                 a = !a;
-                g.FillRectangle(b, vi * (tilewidth + 1), 0, tilewidth, this.Height);
+                g.FillRectangle(b, (vi + offset) * (tilewidth + 1), 0, tilewidth, this.Height);
             }
 
             for (int i = 0; i < 8; i++)
@@ -158,9 +172,10 @@ namespace Analizador_de_Señales
                 Brush b = new SolidBrush(c);
                 Brush bh = new SolidBrush(addColor(c, 25, 25, 25));
 
-                for (int vi = st; vi < count && vi < start + rendercount; vi++)
+                //st = 0;
+                for (int vi = st; vi < count && vi < start + rendercount - 1; vi++)
                 {
-                    if (vi > start)
+                    if (vi > start && s.values.Count > 0) // && vi > s.values.Count
                     {
                         int relvi = vi - start;
                         if (s.values[vi])
@@ -177,12 +192,14 @@ namespace Analizador_de_Señales
             if (Series.First().values.Any() && hoverIndex > -1)
             {
                 int si = mousePos.Y / (tileheight + 1);
-                if (si < 8)
+                if (si < 8 && Series[si].times.Any())
                 {
                     g.DrawString(Series[si].times[hoverIndex > Series[si].times.Count ? 0 : hoverIndex].ToString(@"hh\:mm\:ss"),
                         this.Font, Brushes.Black, Point.Add(mousePos, new Size(3, 4)));
                 }
             }
+            timesBetweenFrames.Add((sw.ElapsedTicks * (1f / 10000000)) * 1000f);
+            sw.Reset();
         }
 
         public void Clear()
@@ -213,26 +230,16 @@ namespace Analizador_de_Señales
 
             return Color.FromArgb(c.A, nr, ng, nb);
         }
-
-        private void LiveChart_MouseDown(object sender, MouseEventArgs e)
+        private Color addColor(Color c, int all)
         {
-            if (e.Button == MouseButtons.Middle)
-            {
-                ScrollToEnd();
-            }
+            return addColor(c, all, all, all);
         }
 
-        private void picSeries_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            if (watchcoll)
-                Draw(g);
-        }
 
         private Point startP;
         private bool drag;
         private int acum;
-        private void picSeries_MouseDown(object sender, MouseEventArgs e)
+        private void LiveChart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -279,8 +286,8 @@ namespace Analizador_de_Señales
                     }
                 }
             }
-            else if (e.Button == MouseButtons.None)
-            {
+            //else if (e.Button == MouseButtons.None)
+            //{
                 hoverIndex = e.X / (tilewidth + 1);
                 if (hoverIndex > Series.First().values.Count - 1)
                     hoverIndex = -1;
@@ -289,7 +296,7 @@ namespace Analizador_de_Señales
 
                 this.Refresh();
 
-            }
+            //}
         }
 
         private void picSeries_MouseUp(object sender, MouseEventArgs e)
@@ -307,6 +314,25 @@ namespace Analizador_de_Señales
         private void picSeries_Resize(object sender, EventArgs e)
         {
             
+        }
+
+        private void timerPerf_Tick(object sender, EventArgs e)
+        {
+            if (timesBetweenFrames.Count > 0)
+            {
+                perfomance = Average(timesBetweenFrames.ToArray());
+                timesBetweenFrames.Clear();
+            }
+        }
+
+        private float Average(params float[] values)
+        {
+            float total = 0.0f;
+            for (int i = 0; i < values.Length; i++)
+            {
+                total += values[i];
+            }
+            return total / values.Length;
         }
 
         private Color RandomColor()

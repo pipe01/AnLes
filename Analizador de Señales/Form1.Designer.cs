@@ -63,6 +63,8 @@
             this.btnPlayPause = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.liveChart1 = new Analizador_de_Señales.LiveChart();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblRend = new System.Windows.Forms.Label();
             this.gbOpciones.SuspendLayout();
             this.gbPuerto.SuspendLayout();
             this.gbReproduccion.SuspendLayout();
@@ -73,12 +75,14 @@
             // gbOpciones
             // 
             this.gbOpciones.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbOpciones.Controls.Add(this.lblRend);
+            this.gbOpciones.Controls.Add(this.label2);
             this.gbOpciones.Controls.Add(this.btnLimpiar);
             this.gbOpciones.Controls.Add(this.btnConsola);
             this.gbOpciones.Controls.Add(this.chkAnimChart);
             this.gbOpciones.Location = new System.Drawing.Point(131, 268);
             this.gbOpciones.Name = "gbOpciones";
-            this.gbOpciones.Size = new System.Drawing.Size(112, 116);
+            this.gbOpciones.Size = new System.Drawing.Size(231, 116);
             this.gbOpciones.TabIndex = 1;
             this.gbOpciones.TabStop = false;
             this.gbOpciones.Text = "Opciones";
@@ -109,7 +113,7 @@
             this.chkAnimChart.AutoSize = true;
             this.chkAnimChart.Checked = true;
             this.chkAnimChart.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAnimChart.Location = new System.Drawing.Point(6, 23);
+            this.chkAnimChart.Location = new System.Drawing.Point(6, 19);
             this.chkAnimChart.Name = "chkAnimChart";
             this.chkAnimChart.Size = new System.Drawing.Size(93, 17);
             this.chkAnimChart.TabIndex = 0;
@@ -284,7 +288,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(469, 379);
+            this.label1.Location = new System.Drawing.Point(620, 379);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 13);
             this.label1.TabIndex = 5;
@@ -307,7 +311,7 @@
             this.gbReproduccion.Controls.Add(this.btnPlayPause);
             this.gbReproduccion.Controls.Add(this.btnGuardar);
             this.gbReproduccion.Controls.Add(this.btnAbrirArchivo);
-            this.gbReproduccion.Location = new System.Drawing.Point(249, 268);
+            this.gbReproduccion.Location = new System.Drawing.Point(368, 268);
             this.gbReproduccion.Name = "gbReproduccion";
             this.gbReproduccion.Size = new System.Drawing.Size(220, 116);
             this.gbReproduccion.TabIndex = 6;
@@ -396,7 +400,7 @@
             this.panel1.Controls.Add(this.checkBox6);
             this.panel1.Controls.Add(this.checkBox8);
             this.panel1.Controls.Add(this.checkBox3);
-            this.panel1.Location = new System.Drawing.Point(475, 265);
+            this.panel1.Location = new System.Drawing.Point(594, 265);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(20, 116);
             this.panel1.TabIndex = 11;
@@ -405,20 +409,38 @@
             // 
             this.liveChart1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.liveChart1.Animate = true;
             this.liveChart1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.liveChart1.Location = new System.Drawing.Point(12, 12);
             this.liveChart1.MaximumSize = new System.Drawing.Size(1000, 250);
             this.liveChart1.MinimumSize = new System.Drawing.Size(0, 250);
             this.liveChart1.Name = "liveChart1";
             this.liveChart1.RealTime = true;
-            this.liveChart1.Size = new System.Drawing.Size(497, 250);
+            this.liveChart1.Size = new System.Drawing.Size(648, 250);
             this.liveChart1.TabIndex = 7;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(109, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(69, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Rendimiento:";
+            // 
+            // lblRend
+            // 
+            this.lblRend.AutoSize = true;
+            this.lblRend.Location = new System.Drawing.Point(118, 38);
+            this.lblRend.Name = "lblRend";
+            this.lblRend.Size = new System.Drawing.Size(0, 13);
+            this.lblRend.TabIndex = 11;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(523, 393);
+            this.ClientSize = new System.Drawing.Size(674, 393);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.checkBox9);
             this.Controls.Add(this.liveChart1);
@@ -479,6 +501,8 @@
         private System.Windows.Forms.Button button1;
         private LiveChart liveChart1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lblRend;
+        private System.Windows.Forms.Label label2;
     }
 }
 

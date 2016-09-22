@@ -41,8 +41,6 @@ namespace Analizador_de_Señales
         private Token[] reprTokens;
         private TimeSpan elOffset = TimeSpan.Zero;
         private System.Timers.Timer timerMain;
-        private bool skipTick = false;
-        private bool seriesChangesApply = false;
         private int[] seriesChanges = new int[2];
 
         private float TimeScale
@@ -110,7 +108,6 @@ namespace Analizador_de_Señales
         {
             if (force || (str.EndsWith("\n") && str.Length == 3))
             {
-                skipTick = true;
                 log.AppendFormat("{0} {1}", (int)GetElapsed().TotalMilliseconds, str);
                 
 
@@ -206,6 +203,7 @@ namespace Analizador_de_Señales
         private void timer1_Tick(object sender, EventArgs e)
         {
             Tick();
+            lblRend.Text = liveChart1.perfomance.ToString("0.0000") + " ms por frame";
         }
 
         private void Tick()
