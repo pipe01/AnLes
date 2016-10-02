@@ -58,14 +58,24 @@ namespace Analizador_de_Señales
         {
             get
             {
-                return trackBar1.Value / 100;
+                float ret = 0;
+                if (trackBar1.InvokeRequired)
+                {
+                    trackBar1.Invoke((MethodInvoker)delegate { ret = trackBar1.Value / 100; });
+                }
+                else
+                {
+                    ret = trackBar1.Value / 100;
+                }
+                return ret;
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             AutoUpdater.CurrentCulture = System.Globalization.CultureInfo.CurrentCulture;
-            AutoUpdater.Start("http://pipe01.square7.ch/adl.xml");
+            llblVersion.Text = "Versión " + Program.CurrentVersion;
+            CheckUpdates();
 
             cbPort.Items.AddRange(SerialPort.GetPortNames());
             Program.serialPort.DataReceived += SerialPort_DataReceived;
@@ -78,6 +88,11 @@ namespace Analizador_de_Señales
             game.UpdateInterval = (int)nudUpdateDelay.Value;
 
             chkTest.Visible = Program.Debug;
+        }
+
+        public void CheckUpdates()
+        {
+            AutoUpdater.Start("http://pipe01.square7.ch/adl.xml", Program.VS ? new Version(0, 0, 0, 0) : Program.CurrentVersion);
         }
 
         private void timerMain_Tick(object sender, ElapsedEventArgs e)
@@ -112,27 +127,38 @@ namespace Analizador_de_Señales
 
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            serialRec += Program.serialPort.ReadExisting();
+            serialRec += Program.serialPort.ReadExisting().Replace("\r", "");
 
-            if (ParseData(serialRec))
-            {
-                serialRec = "";
-            }
+            ParseData(serialRec);
+            serialRec = "";
         }
 
         public bool ParseData(string str, bool force = false, bool dolog = true)
         {
             if (Program.Debug)
                 Console.WriteLine("Input: {0}", str.Replace("\n", "\\n"));
-            if (force || (str.EndsWith("\n") && str.Length == 3))
+
+            string[] split = str.Split('\n');
+            if (split.Length > 2)
             {
-                log.AppendFormat("{0} {1}", (int)GetElapsed().TotalMilliseconds, str);
-                int num1 = int.Parse(str[0].ToString());
-                int num2 = int.Parse(str[1].ToString());
-                if (num1 < 9)
+                for (int i = 0; i < split.Length - 1; i++)
                 {
-                    series[num1 - 1] = num2 == 1;
-                    return true;
+                    ParseData(split[i] + "\n");
+                }
+                return true;
+            }
+            else if (split.Length == 2)
+            {
+                if (force || (str.EndsWith("\n") && str.Length == 3))
+                {
+                    log.AppendFormat("{0} {1}", (int)GetElapsed().TotalMilliseconds, str);
+                    int num1 = int.Parse(str[0].ToString());
+                    int num2 = int.Parse(str[1].ToString());
+                    if (num1 < 9)
+                    {
+                        series[num1 - 1] = num2 == 1;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -183,10 +209,7 @@ namespace Analizador_de_Señales
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Program.serialPort.IsOpen)
-            {
-                new frmConsole().Show();
-            }
+            Program.ToggleConsole();
         }
 
         private void ChangeState(State state)
@@ -198,7 +221,6 @@ namespace Analizador_de_Señales
                 case State.Default:
                     btnAbrir.Enabled = true;
                     btnCerrar.Enabled = false;
-                    btnConsola.Enabled = false;
                     btnAbrirArchivo.Enabled = true;
                     btnGuardar.Enabled = false;
                     btnLimpiar.Enabled = true;
@@ -210,7 +232,6 @@ namespace Analizador_de_Señales
                 case State.RealInputRunning:
                     btnAbrir.Enabled = false;
                     btnCerrar.Enabled = true;
-                    btnConsola.Enabled = true;
                     btnAbrir.Enabled = false;
                     btnGuardar.Enabled = false;
                     btnLimpiar.Enabled = false;
@@ -490,6 +511,17 @@ namespace Analizador_de_Señales
             elapsed.Offset = endTime - TimeSpan.FromSeconds(1);
             game.Running = false;
             game.ScrollToEnd();
+        }
+
+        private void llblVersion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            CheckUpdates();
+        }
+
+        private void btnActSerie_Click(object sender, EventArgs e)
+        {
+            cbPort.Items.Clear();
+            cbPort.Items.AddRange(SerialPort.GetPortNames());
         }
     }
 

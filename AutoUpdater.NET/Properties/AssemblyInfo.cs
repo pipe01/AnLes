@@ -1,16 +1,16 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Resources;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Analizador de Señales")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("AutoUpdater.NET")]
+[assembly: AssemblyDescription("AutoUpdater.NET is a class library that allows .NET developers to easily add auto update functionality to their C# or VB.NET projects.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Analizador de Señales")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCompany("RBSoft")]
+[assembly: AssemblyProduct("AutoUpdater.NET")]
+[assembly: AssemblyCopyright("Copyright © 2012-2016 RBSoft")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("698ee448-b2a6-46d8-80e6-5b90fb1c7388")]
+[assembly: Guid("a4037a6f-fdf7-46c8-a303-c3c4fcddb015")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.4.1.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.3.2.0")]
+[assembly: AssemblyFileVersion("1.3.2.0")]
+[assembly: NeutralResourcesLanguageAttribute("en")]

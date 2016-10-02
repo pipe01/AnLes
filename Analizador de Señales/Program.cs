@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace Analizador_de_Señales
 {
@@ -13,6 +14,10 @@ namespace Analizador_de_Señales
         public static SerialPort serialPort;
         public static Form1 form1;
         public static bool Debug = false;
+        public static bool VS = false;
+        public static Version CurrentVersion;
+        private static bool console = true;
+        private static IntPtr consoleHandle;
         //public static Version CurrentVersion = System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion;
 
         [DllImport("kernel32.dll")]
@@ -30,25 +35,50 @@ namespace Analizador_de_Señales
         [STAThread]
         static void Main(string[] args)
         {
-            Debug = args.Length > 0 && args.Contains("debug");
-
-            if (!Debug)
-                Debug = System.Diagnostics.Debugger.IsAttached;
+            VS = System.Diagnostics.Debugger.IsAttached;
+            Debug = VS || args.Length > 0 && args.Contains("debug");
+            CurrentVersion = Assembly.GetEntryAssembly().GetName().Version;
+            consoleHandle = GetConsoleWindow();
 
             if (!Debug)
             {
-                var handle = GetConsoleWindow();
-                ShowWindow(handle, SW_HIDE);
+                ToggleConsole();
             }
             Console.WriteLine("AnLes by pipe01");
-            Console.WriteLine(new MStopwatch().Elapsed.ToString());
-
-            serialPort = new SerialPort();
+            Console.WriteLine("Versión " + CurrentVersion);
             
+            serialPort = new SerialPort();
+
+            bool loop = true;
+
+            /*Task.Run(() => 
+            {
+                while (loop)
+                {
+                    string input = Console.ReadLine();
+                    Console.WriteLine(">" + input);
+                }
+            });*/
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             form1 = new Form1();
             Application.Run(form1);
+
+            loop = false;
+        }
+
+        public static void ToggleConsole()
+        {
+            console = !console;
+            if (console)
+            {
+                ShowWindow(consoleHandle, SW_SHOW);
+            }
+            else
+            {
+                ShowWindow(consoleHandle, SW_HIDE);
+            }
         }
     }
 }

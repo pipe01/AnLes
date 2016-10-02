@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFML_Viewer
@@ -60,6 +61,7 @@ namespace SFML_Viewer
 
         public Color EvenColor { get; set; } = new Color(160, 160, 160);
         public Color OddColor { get; set; } = new Color(180, 180, 180);
+        public Color HighColor { get; set; } = new Color(210, 210, 210);
 
         public bool Running { get; set; } = false;
 
@@ -139,11 +141,17 @@ namespace SFML_Viewer
             newTime = clock.ElapsedTime;
             deltaTime = (newTime.AsMicroseconds() - oldTime.AsMicroseconds()) / 1000f;
 
-            window.DispatchEvents();
+            if (!Exit && window.IsOpen)
+                window.DispatchEvents();
+
+            absMousePos = Mouse.GetPosition(window);
+            mousePos = absMousePos;
+            mousePos.X += (int)(window.GetView().Center.X - window.Size.X / 2);
 
             window.Clear(windowColor);
 
             int hoverIndex = (int)(mousePos.X / (TileWidth + 1));
+            bool hover = mousePos.X >= 0 && mousePos.X <= window.Size.X && mousePos.Y >= 0 && mousePos.Y <= window.Size.Y;
 
             window.Draw(startRect);
 
@@ -151,7 +159,7 @@ namespace SFML_Viewer
             for (int i = Math.Max(ToEven(firstVisibleIndex - 1), 0); i < Math.Min(firstVisibleIndex + maxTiles, Series[0].Count); i++)
             {
                 Color prev = even ? EvenColor : OddColor;
-                brect.FillColor = i == hoverIndex ? AddColor(prev, 30) : prev;
+                brect.FillColor = i == hoverIndex && hover ? HighColor : prev;
                 brect.Position = new Vector2f(i * (TileWidth + 1), 0);
                 window.Draw(brect);
                 even = !even;
@@ -168,7 +176,7 @@ namespace SFML_Viewer
                     {
                         rect.Position = new Vector2f(d * (TileWidth + 1), y);
 
-                        if (hoverIndex == d)
+                        if (d == hoverIndex)
                             rect.FillColor = cur.TileColorHL;
                         else
                             rect.FillColor = cur.TileColor;
@@ -177,6 +185,7 @@ namespace SFML_Viewer
                             window.Draw(rect);
                     }
                 }
+                cur = null;
             }
 
             textHoverTime.Position = new Vector2f(absMousePos.X + 3f + (v.Center.X - window.Size.X / 2), absMousePos.Y + 3);
@@ -272,7 +281,6 @@ namespace SFML_Viewer
                 dragStart = absMousePos;
 
 
-                catchMouse = false;
                 if (absMousePos.X >= window.Size.X)
                 {
                     Mouse.SetPosition(new Vector2i(1, absMousePos.Y), window);
@@ -283,7 +291,6 @@ namespace SFML_Viewer
                     Mouse.SetPosition(new Vector2i((int)window.Size.X - 1, absMousePos.Y), window);
                     MoveView(window.Size.X);
                 }
-                catchMouse = true;
             }
         }
 
@@ -336,18 +343,23 @@ namespace SFML_Viewer
 
         public void Resize()
         {
-            v = window.GetView();
-            //v.Center = new Vector2f(v.Center.X - (window.Size.X - lastSize.X), v.Center.Y);
-            v.Size = new Vector2f(window.Size.X, v.Size.Y);
-            window.SetView(v);
+            try
+            {
+                v = window.GetView();
+                //v.Center = new Vector2f(v.Center.X - (window.Size.X - lastSize.X), v.Center.Y);
+                v.Size = new Vector2f(window.Size.X, v.Size.Y);
+                window.SetView(v);
 
-            lastSize = window.Size;
+                lastSize = window.Size;
+            } catch (NullReferenceException) { }
         }
 
     }
 
     public class Series : List<Serie>
     {
+        public Series() : base(8) { }
+
         public new int Count
         {
             get

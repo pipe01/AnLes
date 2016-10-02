@@ -61,6 +61,8 @@
             this.btnParar = new System.Windows.Forms.Button();
             this.btnPlayPause = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.llblVersion = new System.Windows.Forms.LinkLabel();
+            this.btnActSerie = new System.Windows.Forms.Button();
             this.gbOpciones.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpdateDelay)).BeginInit();
             this.gbPuerto.SuspendLayout();
@@ -72,6 +74,7 @@
             // gbOpciones
             // 
             this.gbOpciones.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbOpciones.Controls.Add(this.llblVersion);
             this.gbOpciones.Controls.Add(this.chkLowUse);
             this.gbOpciones.Controls.Add(this.label6);
             this.gbOpciones.Controls.Add(this.label5);
@@ -171,7 +174,6 @@
             // 
             // btnConsola
             // 
-            this.btnConsola.Enabled = false;
             this.btnConsola.Location = new System.Drawing.Point(6, 51);
             this.btnConsola.Name = "btnConsola";
             this.btnConsola.Size = new System.Drawing.Size(101, 23);
@@ -231,13 +233,14 @@
             this.cbPort.FormattingEnabled = true;
             this.cbPort.Location = new System.Drawing.Point(6, 19);
             this.cbPort.Name = "cbPort";
-            this.cbPort.Size = new System.Drawing.Size(101, 21);
+            this.cbPort.Size = new System.Drawing.Size(68, 21);
             this.cbPort.TabIndex = 2;
             this.cbPort.SelectedIndexChanged += new System.EventHandler(this.cbPort_SelectedIndexChanged);
             // 
             // gbPuerto
             // 
             this.gbPuerto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbPuerto.Controls.Add(this.btnActSerie);
             this.gbPuerto.Controls.Add(this.btnCerrar);
             this.gbPuerto.Controls.Add(this.btnAbrir);
             this.gbPuerto.Controls.Add(this.cbPort);
@@ -406,6 +409,30 @@
             this.pictureBox1.TabIndex = 12;
             this.pictureBox1.TabStop = false;
             // 
+            // llblVersion
+            // 
+            this.llblVersion.ActiveLinkColor = System.Drawing.Color.Red;
+            this.llblVersion.AutoSize = true;
+            this.llblVersion.LinkColor = System.Drawing.Color.Blue;
+            this.llblVersion.Location = new System.Drawing.Point(125, 91);
+            this.llblVersion.Name = "llblVersion";
+            this.llblVersion.Size = new System.Drawing.Size(78, 13);
+            this.llblVersion.TabIndex = 15;
+            this.llblVersion.TabStop = true;
+            this.llblVersion.Text = "Versión 1.0.0.0";
+            this.llblVersion.VisitedLinkColor = System.Drawing.Color.Blue;
+            this.llblVersion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llblVersion_LinkClicked);
+            // 
+            // btnActSerie
+            // 
+            this.btnActSerie.Location = new System.Drawing.Point(76, 18);
+            this.btnActSerie.Name = "btnActSerie";
+            this.btnActSerie.Size = new System.Drawing.Size(31, 23);
+            this.btnActSerie.TabIndex = 5;
+            this.btnActSerie.Text = "Act";
+            this.btnActSerie.UseVisualStyleBackColor = true;
+            this.btnActSerie.Click += new System.EventHandler(this.btnActSerie_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -470,6 +497,8 @@
         private System.Windows.Forms.NumericUpDown nudUpdateDelay;
         private System.Windows.Forms.CheckBox chkLowUse;
         private System.Windows.Forms.Button btnAvanzarFinal;
+        private System.Windows.Forms.LinkLabel llblVersion;
+        private System.Windows.Forms.Button btnActSerie;
     }
 }
 
