@@ -42,6 +42,12 @@ namespace Analizador_de_Señales
             s.AppendLine();
             NewLine = s.ToString();
             s = null;
+            Program.serialPort.DataReceived += SerialPort_DataReceived;
+        }
+
+        private void SerialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        {
+            
         }
     }
 }

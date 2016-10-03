@@ -112,15 +112,48 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="timerPerf.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>114, 17</value>
-  </metadata>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Daha sonra hatırlar</value>
+  </data>
+  <data name="buttonOK.Text" xml:space="preserve">
+    <value>Tamam</value>
+  </data>
+  <data name="comboBoxRemindLater.Items" xml:space="preserve">
+    <value>30 dakika sonra</value>
+  </data>
+  <data name="comboBoxRemindLater.Items1" xml:space="preserve">
+    <value>12 saat sonra</value>
+  </data>
+  <data name="comboBoxRemindLater.Items2" xml:space="preserve">
+    <value>1 gün sonra</value>
+  </data>
+  <data name="comboBoxRemindLater.Items3" xml:space="preserve">
+    <value>2 gün sonra</value>
+  </data>
+  <data name="comboBoxRemindLater.Items4" xml:space="preserve">
+    <value>4 gün sonra</value>
+  </data>
+  <data name="comboBoxRemindLater.Items5" xml:space="preserve">
+    <value>8 gün sonra</value>
+  </data>
+  <data name="comboBoxRemindLater.Items6" xml:space="preserve">
+    <value>10 gün sonra</value>
+  </data>
+  <data name="labelDescription.Text" xml:space="preserve">
+    <value>Güncellemeleri şimdi yüklemelisiniz. Bu internet bağlantı hızınıza bağlı olarak birkaç dakika alarak size uygulamanın son sürümlerini sağlar.</value>
+  </data>
+  <data name="labelTitle.Text" xml:space="preserve">
+    <value>Güncellemeleri sonra yüklemek istediğinize emin misiniz?</value>
+  </data>
+  <data name="radioButtonNo.Text" xml:space="preserve">
+    <value>Hayır, Güncellemeleri şimdi yükle(Önerilen).</value>
+  </data>
+  <data name="radioButtonYes.Text" xml:space="preserve">
+    <value>Evet, Lütfen daha sonra hatırlat : </value>
+  </data>
 </root>

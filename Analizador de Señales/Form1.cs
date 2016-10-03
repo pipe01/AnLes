@@ -1,4 +1,5 @@
 ﻿using AutoUpdaterDotNET;
+using SFML_Viewer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,11 +30,19 @@ namespace Analizador_de_Señales
             InitializeComponent();
         }
 
+        private enum State
+        {
+            Default,
+            RealInputRunning,
+            ReproductionRunning,
+            RealInputClosed
+        }
+
         private bool[] series = new bool[8];
         private string serialRec = "";
         private DateTime startTime;
         private TimeSpan endTime;
-        private Stopwatch elapsed = new Stopwatch();
+        private MStopwatch elapsed = new MStopwatch();
         private StringBuilder log = new StringBuilder();
         private int reprIndex = 0;
         private bool reproducing = false;
@@ -41,22 +50,32 @@ namespace Analizador_de_Señales
         private Token[] reprTokens;
         private TimeSpan elOffset = TimeSpan.Zero;
         private System.Timers.Timer timerMain;
-        private bool skipTick = false;
-        private bool seriesChangesApply = false;
         private int[] seriesChanges = new int[2];
+        private Game game;
+
 
         private float TimeScale
         {
             get
             {
-                return trackBar1.Value / 10;
+                float ret = 0;
+                if (trackBar1.InvokeRequired)
+                {
+                    trackBar1.Invoke((MethodInvoker)delegate { ret = trackBar1.Value / 100; });
+                }
+                else
+                {
+                    ret = trackBar1.Value / 100;
+                }
+                return ret;
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             AutoUpdater.CurrentCulture = System.Globalization.CultureInfo.CurrentCulture;
-            AutoUpdater.Start("http://pipe01.square7.ch/adl.xml");
+            llblVersion.Text = "Versión " + Program.CurrentVersion;
+            CheckUpdates();
 
             cbPort.Items.AddRange(SerialPort.GetPortNames());
             Program.serialPort.DataReceived += SerialPort_DataReceived;
@@ -64,6 +83,16 @@ namespace Analizador_de_Señales
             timerMain = new System.Timers.Timer();
             timerMain.Interval = 500;
             timerMain.Elapsed += timerMain_Tick;
+
+            game = new Game();
+            game.UpdateInterval = (int)nudUpdateDelay.Value;
+
+            chkTest.Visible = Program.Debug;
+        }
+
+        public void CheckUpdates()
+        {
+            AutoUpdater.Start("http://pipe01.square7.ch/adl.xml", Program.VS ? new Version(0, 0, 0, 0) : Program.CurrentVersion);
         }
 
         private void timerMain_Tick(object sender, ElapsedEventArgs e)
@@ -71,14 +100,14 @@ namespace Analizador_de_Señales
             //Tick();
         }
 
-        private TimeSpan GetElapsed()
+        private TimeSpan GetElapsed(bool original = false)
         {
-            return elapsed.Elapsed + elOffset;
+            return (elapsed.Elapsed + elOffset).Multiply(original ? 1 : TimeScale);
         }
 
         private void ClearChart()
         {
-            liveChart1.Clear();
+            game.Clear();
 
             reprTokens = null;
             reprLines = null;
@@ -98,29 +127,38 @@ namespace Analizador_de_Señales
 
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            serialRec += Program.serialPort.ReadExisting();
+            serialRec += Program.serialPort.ReadExisting().Replace("\r", "");
 
-            if (ParseData(serialRec))
-            {
-                serialRec = "";
-            }
+            ParseData(serialRec);
+            serialRec = "";
         }
 
         public bool ParseData(string str, bool force = false, bool dolog = true)
         {
-            if (force || (str.EndsWith("\n") && str.Length == 3))
-            {
-                skipTick = true;
-                log.AppendFormat("{0} {1}", (int)GetElapsed().TotalMilliseconds, str);
-                
+            if (Program.Debug)
+                Console.WriteLine("Input: {0}", str.Replace("\n", "\\n"));
 
-                Console.Write(str);
-                int num1 = int.Parse(str[0].ToString());
-                int num2 = int.Parse(str[1].ToString());
-                if (num1 < 9)
+            string[] split = str.Split('\n');
+            if (split.Length > 2)
+            {
+                for (int i = 0; i < split.Length - 1; i++)
                 {
-                    series[num1 - 1] = num2 == 1;
-                    return true;
+                    ParseData(split[i] + "\n");
+                }
+                return true;
+            }
+            else if (split.Length == 2)
+            {
+                if (force || (str.EndsWith("\n") && str.Length == 3))
+                {
+                    log.AppendFormat("{0} {1}", (int)GetElapsed().TotalMilliseconds, str);
+                    int num1 = int.Parse(str[0].ToString());
+                    int num2 = int.Parse(str[1].ToString());
+                    if (num1 < 9)
+                    {
+                        series[num1 - 1] = num2 == 1;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -149,67 +187,99 @@ namespace Analizador_de_Señales
                 log = new StringBuilder();
                 log.AppendLine(startTime.Ticks.ToString());
 
-                btnAbrir.Enabled = false;
-                btnCerrar.Enabled = true;
-                btnConsola.Enabled = true;
-                btnAbrir.Enabled = false;
-                btnGuardar.Enabled = false;
-                gbReproduccion.Enabled = false;
-                cbPort.Enabled = false;
+                ChangeState(State.RealInputRunning);
+
                 timer1.Start();
                 timerMain.Start();
+
+                game.Running = true;
             }
         }
 
         private void btnCerrar_Click(object sender, EventArgs e)
         {
-
+            game.Running = false;
             Program.serialPort.Close();
-            btnAbrir.Enabled = true;
-            btnCerrar.Enabled = false;
-            btnConsola.Enabled = false;
-            btnAbrir.Enabled = true;
-            btnGuardar.Enabled = true;
-            gbReproduccion.Enabled = true;
-            cbPort.Enabled = true;
+
+            ChangeState(State.RealInputClosed);
+
             timer1.Stop();
             log.AppendFormat("{0} end", (int)GetElapsed().TotalMilliseconds);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (Program.serialPort.IsOpen)
-            {
-                new frmConsole().Show();
-            }
+            Program.ToggleConsole();
         }
 
-        private void AddPoint(int series, int on)
+        private void ChangeState(State state)
         {
-            /*int y = GetYAxis(series, on);
-            tbScale.Invoke((MethodInvoker)delegate 
+            if (state != State.Default)
+                ChangeState(State.Default);
+            switch (state)
             {
-                tbScale.Series[series].Points.AddXY(startTime.Add(GetElapsed()), y);
-            });*/
-            liveChart1.Invoke((MethodInvoker)delegate
-            {
-                liveChart1.AddOneSeries(on == 1, series, elapsed.Elapsed);
-            });
+                case State.Default:
+                    btnAbrir.Enabled = true;
+                    btnCerrar.Enabled = false;
+                    btnAbrirArchivo.Enabled = true;
+                    btnGuardar.Enabled = false;
+                    btnLimpiar.Enabled = true;
+                    gbReproduccion.Enabled = true;
+                    cbPort.Enabled = true;
+                    chkTest.Enabled = true;
+                    chkTest.Checked = false;
+                    btnAvanzarFinal.Enabled = false;
+                    break;
+                case State.RealInputRunning:
+                    btnAbrir.Enabled = false;
+                    btnCerrar.Enabled = true;
+                    btnAbrir.Enabled = false;
+                    btnGuardar.Enabled = false;
+                    btnLimpiar.Enabled = false;
+                    gbReproduccion.Enabled = false;
+                    cbPort.Enabled = false;
+                    btnAvanzarFinal.Enabled = true;
+                    break;
+                case State.ReproductionRunning:
+                    gbPuerto.Enabled = false;
+                    btnAbrir.Enabled = false;
+                    btnPlayPause.Enabled = true;
+                    btnParar.Enabled = true;
+                    gbReproduccion.Enabled = true;
+                    chkTest.Checked = false;
+                    chkTest.Enabled = false;
+                    btnAvanzarFinal.Enabled = true;
+                    break;
+                case State.RealInputClosed:
+                    gbReproduccion.Enabled = true;
+                    btnPlayPause.Enabled = false;
+                    btnParar.Enabled = false;
+                    btnAbrirArchivo.Enabled = true;
+                    btnGuardar.Enabled = true;
+                    btnAvanzarFinal.Enabled = true;
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (Program.serialPort.IsOpen)
                 Program.serialPort.Close();
+            game.Close();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             Tick();
+            //lblRend.Text = liveChart1.perfomance.ToString("0.0000") + " ms por frame";
         }
 
         private void Tick()
         {
+            lblRend.Text = game.FPS.ToString("0.00") + " fps";
+
             //count++;
             var e = GetElapsed();
             //Console.WriteLine((int)e.TotalMilliseconds);
@@ -223,7 +293,7 @@ namespace Analizador_de_Señales
                 else if (reprIndex < reprTokens.Length)
                 {
                     Token t = reprTokens[reprIndex];
-                    if (GetElapsed() >= t.time)
+                    if (GetElapsed().Multiply(TimeScale) >= t.time)
                     {
                         ParseData(t.num1 + "" + t.num2, true);
                         reprIndex++;
@@ -238,24 +308,31 @@ namespace Analizador_de_Señales
             {
                 lblTiempo.Invoke((MethodInvoker)delegate
                 {
-                    lblTiempo.Text = GetElapsed().ToString(@"hh\:mm\:ss");
+                    lblTiempo.Text = GetElapsed(true).ToString(@"hh\:mm\:ss");
                 });
             }
 
             UpdateCheckboxes();
 
-            liveChart1.AddOneSeries(series, elapsed.Elapsed);
+            SerieValue[] vs = new SerieValue[8];
+            for (int i = 0; i < series.Length; i++)
+            {
+                vs[i] = new SerieValue(series[i], elapsed.Elapsed);
+            }
+
+            game.AddTiles(vs);
+            //liveChart1.AddOneSeries(series, elapsed.Elapsed);
         }
 
         private void UpdateCheckboxes()
         {
-            int i = 0;
+            /*int i = 0;
             foreach (var item in series)
             {
                 var cbox = (panel1.Controls.Find("checkbox" + (i + 1), false).First() as CheckBox);
                 cbox.Invoke((MethodInvoker)delegate { cbox.Checked = item; });
                 i++;
-            }
+            }*/
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
@@ -300,15 +377,13 @@ namespace Analizador_de_Señales
                     endTime = TimeSpan.Zero;
                 }
 
-                gbPuerto.Enabled = false;
-                btnAbrir.Enabled = false;
-                btnPlayPause.Enabled = true;
-                btnParar.Enabled = true;
+                ChangeState(State.ReproductionRunning);
 
                 reproducing = true;
                 elapsed.Restart();
-                //timer1.Start();
-                timerMain.Start();
+                timer1.Start();
+                game.Running = true;
+                //timerMain.Start();
             }
         }
 
@@ -324,41 +399,28 @@ namespace Analizador_de_Señales
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
             ClearChart();
+            ChangeState(State.Default);
         }
 
         private int pro = 0;
         private int step = 1;
         private void timer2_Tick(object sender, EventArgs e)
         {
-            Random r = new Random();
-            int num1 = r.Next(1, 8);
-            int num2 = r.NextDouble() > 0.5f ? 1 : 0;
-
-            /*if (!series[num1 - 1] && num2 == 0) num2 = 1;
-            else if (series[num1 - 1] && num2 == 1) num2 = 0;*/
-
-            num1 = pro + 1;
-            num2 = liveChart1.Series[num1 - 1].values.Any() ?
-                (liveChart1.Series[num1 - 1].values.Last() ? 0 : 1) : 1;
-
+            int num1 = pro + 1;
+            int num2 = game.Series[num1 - 1].Any() ?
+                (game.Series[num1 - 1].Last().Value ? 0 : 1) : 1;
             
             if (pro >= 7) step = -1;
             else if (pro <= 0) step = 1;
 
             pro += step;
 
-            series[num1 - 1] = num2 == 1;
-
-            //Console.WriteLine(num2);
-            //liveChart1.AddOneSeries(num2 == 1, num1 - 1, elapsed.Elapsed);
-            //liveChart1.series[num1 - 1].values.Add(num2 == 1);
-
-            //ParseData(num1 + "" + num2 + "\n", true);
+            ParseData(num1 + "" + num2 + "\n", true);
         }
 
         private void checkBox9_CheckedChanged(object sender, EventArgs e)
         {
-            timer2.Enabled = checkBox9.Checked;
+            timer2.Enabled = chkTest.Checked;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -387,13 +449,91 @@ namespace Analizador_de_Señales
             frmChooseTime frm = new frmChooseTime();
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                elOffset += frm.Result;
+                elapsed.Offset += frm.Result;
             }
         }
 
         private void chkAnimChart_CheckedChanged(object sender, EventArgs e)
         {
-            liveChart1.Animate = chkAnimChart.Checked;
+            //liveChart1.Animate = chkAnimChart.Checked;
+        }
+
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            game.Start(pictureBox1.Handle);
+            ChangeState(State.Default);
+        }
+
+        private void gbOpciones_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nudUpdateDelay_ValueChanged(object sender, EventArgs e)
+        {
+            int v = (int)nudUpdateDelay.Value;
+            timer1.Interval = v;
+            game.UpdateInterval = v;
+        }
+
+        private void Form1_ResizeEnd(object sender, EventArgs e)
+        {
+            game.Resize();
+        }
+
+        private void chkLowUse_CheckedChanged(object sender, EventArgs e)
+        {
+            game.SetLowUsage(chkLowUse.Checked);
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            nudUpdateDelay.Value = 500 * (decimal)TimeScale;
+        }
+
+        private void btnAvanzarFinal_Click(object sender, EventArgs e)
+        {
+            if (reproducing)
+            {
+                SerieValue[] small = new SerieValue[8];
+                for (int i = 0; i < reprTokens.Length; i++)
+                {
+                    var item = reprTokens[i];
+                    small[item.num1 - 1] = new SerieValue(item.num2 == 1, item.time);
+                    game.AddTiles(small);
+                }
+                elapsed.Offset = endTime - TimeSpan.FromSeconds(1);
+                game.Running = false;
+                game.ScrollToEnd();
+            }
+            else if (game.Series.Count > 0)
+            {
+                game.ScrollToEnd();
+            }
+        }
+
+        private void llblVersion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            CheckUpdates();
+        }
+
+        private void btnActSerie_Click(object sender, EventArgs e)
+        {
+            cbPort.Items.Clear();
+            cbPort.Items.AddRange(SerialPort.GetPortNames());
+        }
+    }
+
+    public class MStopwatch : Stopwatch
+    {
+        public TimeSpan Offset { get; set; }
+
+        public new TimeSpan Elapsed
+        {
+            get
+            {
+                return base.Elapsed + Offset;
+            }
         }
     }
 }

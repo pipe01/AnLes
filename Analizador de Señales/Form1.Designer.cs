@@ -30,10 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             this.gbOpciones = new System.Windows.Forms.GroupBox();
+            this.chkLowUse = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.nudUpdateDelay = new System.Windows.Forms.NumericUpDown();
+            this.lblRend = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnConsola = new System.Windows.Forms.Button();
             this.chkAnimChart = new System.Windows.Forms.CheckBox();
-            this.checkBox9 = new System.Windows.Forms.CheckBox();
+            this.chkTest = new System.Windows.Forms.CheckBox();
             this.btnGuardar = new System.Windows.Forms.Button();
             this.btnAbrirArchivo = new System.Windows.Forms.Button();
             this.cbPort = new System.Windows.Forms.ComboBox();
@@ -41,47 +47,120 @@
             this.btnCerrar = new System.Windows.Forms.Button();
             this.btnAbrir = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.checkBox8 = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.gbReproduccion = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnAvanzarFinal = new System.Windows.Forms.Button();
+            this.btnAvanzar = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label3 = new System.Windows.Forms.Label();
             this.lblTiempo = new System.Windows.Forms.Label();
             this.btnParar = new System.Windows.Forms.Button();
             this.btnPlayPause = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.liveChart1 = new Analizador_de_Señales.LiveChart();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.llblVersion = new System.Windows.Forms.LinkLabel();
+            this.btnActSerie = new System.Windows.Forms.Button();
             this.gbOpciones.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpdateDelay)).BeginInit();
             this.gbPuerto.SuspendLayout();
             this.gbReproduccion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // gbOpciones
             // 
             this.gbOpciones.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbOpciones.Controls.Add(this.btnAvanzarFinal);
+            this.gbOpciones.Controls.Add(this.chkLowUse);
+            this.gbOpciones.Controls.Add(this.label6);
+            this.gbOpciones.Controls.Add(this.label5);
+            this.gbOpciones.Controls.Add(this.nudUpdateDelay);
+            this.gbOpciones.Controls.Add(this.lblRend);
+            this.gbOpciones.Controls.Add(this.label2);
             this.gbOpciones.Controls.Add(this.btnLimpiar);
             this.gbOpciones.Controls.Add(this.btnConsola);
             this.gbOpciones.Controls.Add(this.chkAnimChart);
-            this.gbOpciones.Location = new System.Drawing.Point(131, 268);
+            this.gbOpciones.Location = new System.Drawing.Point(131, 267);
             this.gbOpciones.Name = "gbOpciones";
-            this.gbOpciones.Size = new System.Drawing.Size(112, 116);
+            this.gbOpciones.Size = new System.Drawing.Size(231, 116);
             this.gbOpciones.TabIndex = 1;
             this.gbOpciones.TabStop = false;
             this.gbOpciones.Text = "Opciones";
+            this.gbOpciones.Enter += new System.EventHandler(this.gbOpciones_Enter);
+            // 
+            // chkLowUse
+            // 
+            this.chkLowUse.AutoSize = true;
+            this.chkLowUse.Location = new System.Drawing.Point(108, 54);
+            this.chkLowUse.Name = "chkLowUse";
+            this.chkLowUse.Size = new System.Drawing.Size(122, 17);
+            this.chkLowUse.TabIndex = 13;
+            this.chkLowUse.Text = "Modo bajo consumo";
+            this.chkLowUse.UseVisualStyleBackColor = true;
+            this.chkLowUse.CheckedChanged += new System.EventHandler(this.chkLowUse_CheckedChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(201, 32);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(20, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "ms";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(121, 11);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(83, 13);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "Actualizar cada:";
+            // 
+            // nudUpdateDelay
+            // 
+            this.nudUpdateDelay.Location = new System.Drawing.Point(125, 27);
+            this.nudUpdateDelay.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudUpdateDelay.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nudUpdateDelay.Name = "nudUpdateDelay";
+            this.nudUpdateDelay.Size = new System.Drawing.Size(73, 20);
+            this.nudUpdateDelay.TabIndex = 12;
+            this.nudUpdateDelay.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.nudUpdateDelay.ValueChanged += new System.EventHandler(this.nudUpdateDelay_ValueChanged);
+            // 
+            // lblRend
+            // 
+            this.lblRend.AutoSize = true;
+            this.lblRend.Location = new System.Drawing.Point(70, 36);
+            this.lblRend.Name = "lblRend";
+            this.lblRend.Size = new System.Drawing.Size(30, 13);
+            this.lblRend.TabIndex = 11;
+            this.lblRend.Text = "0 fps";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 36);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(69, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Rendimiento:";
             // 
             // btnLimpiar
             // 
@@ -95,7 +174,6 @@
             // 
             // btnConsola
             // 
-            this.btnConsola.Enabled = false;
             this.btnConsola.Location = new System.Drawing.Point(6, 51);
             this.btnConsola.Name = "btnConsola";
             this.btnConsola.Size = new System.Drawing.Size(101, 23);
@@ -109,7 +187,7 @@
             this.chkAnimChart.AutoSize = true;
             this.chkAnimChart.Checked = true;
             this.chkAnimChart.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAnimChart.Location = new System.Drawing.Point(6, 23);
+            this.chkAnimChart.Location = new System.Drawing.Point(6, 19);
             this.chkAnimChart.Name = "chkAnimChart";
             this.chkAnimChart.Size = new System.Drawing.Size(93, 17);
             this.chkAnimChart.TabIndex = 0;
@@ -117,17 +195,17 @@
             this.chkAnimChart.UseVisualStyleBackColor = true;
             this.chkAnimChart.CheckedChanged += new System.EventHandler(this.chkAnimChart_CheckedChanged);
             // 
-            // checkBox9
+            // chkTest
             // 
-            this.checkBox9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBox9.AutoSize = true;
-            this.checkBox9.Location = new System.Drawing.Point(-3, 379);
-            this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(47, 17);
-            this.checkBox9.TabIndex = 10;
-            this.checkBox9.Text = "Test";
-            this.checkBox9.UseVisualStyleBackColor = true;
-            this.checkBox9.CheckedChanged += new System.EventHandler(this.checkBox9_CheckedChanged);
+            this.chkTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkTest.AutoSize = true;
+            this.chkTest.Location = new System.Drawing.Point(0, 378);
+            this.chkTest.Name = "chkTest";
+            this.chkTest.Size = new System.Drawing.Size(47, 17);
+            this.chkTest.TabIndex = 10;
+            this.chkTest.Text = "Test";
+            this.chkTest.UseVisualStyleBackColor = true;
+            this.chkTest.CheckedChanged += new System.EventHandler(this.checkBox9_CheckedChanged);
             // 
             // btnGuardar
             // 
@@ -155,17 +233,18 @@
             this.cbPort.FormattingEnabled = true;
             this.cbPort.Location = new System.Drawing.Point(6, 19);
             this.cbPort.Name = "cbPort";
-            this.cbPort.Size = new System.Drawing.Size(101, 21);
+            this.cbPort.Size = new System.Drawing.Size(68, 21);
             this.cbPort.TabIndex = 2;
             this.cbPort.SelectedIndexChanged += new System.EventHandler(this.cbPort_SelectedIndexChanged);
             // 
             // gbPuerto
             // 
             this.gbPuerto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.gbPuerto.Controls.Add(this.btnActSerie);
             this.gbPuerto.Controls.Add(this.btnCerrar);
             this.gbPuerto.Controls.Add(this.btnAbrir);
             this.gbPuerto.Controls.Add(this.cbPort);
-            this.gbPuerto.Location = new System.Drawing.Point(12, 268);
+            this.gbPuerto.Location = new System.Drawing.Point(12, 267);
             this.gbPuerto.Name = "gbPuerto";
             this.gbPuerto.Size = new System.Drawing.Size(113, 116);
             this.gbPuerto.TabIndex = 3;
@@ -198,93 +277,11 @@
             this.timer1.Interval = 500;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Enabled = false;
-            this.checkBox1.Location = new System.Drawing.Point(0, 1);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(15, 14);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Enabled = false;
-            this.checkBox2.Location = new System.Drawing.Point(0, 15);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(15, 14);
-            this.checkBox2.TabIndex = 4;
-            this.checkBox2.UseVisualStyleBackColor = true;
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Enabled = false;
-            this.checkBox3.Location = new System.Drawing.Point(0, 29);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(15, 14);
-            this.checkBox3.TabIndex = 4;
-            this.checkBox3.UseVisualStyleBackColor = true;
-            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Enabled = false;
-            this.checkBox4.Location = new System.Drawing.Point(0, 43);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(15, 14);
-            this.checkBox4.TabIndex = 4;
-            this.checkBox4.UseVisualStyleBackColor = true;
-            // 
-            // checkBox5
-            // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Enabled = false;
-            this.checkBox5.Location = new System.Drawing.Point(0, 57);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(15, 14);
-            this.checkBox5.TabIndex = 4;
-            this.checkBox5.UseVisualStyleBackColor = true;
-            // 
-            // checkBox6
-            // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Enabled = false;
-            this.checkBox6.Location = new System.Drawing.Point(0, 71);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(15, 14);
-            this.checkBox6.TabIndex = 4;
-            this.checkBox6.UseVisualStyleBackColor = true;
-            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
-            // 
-            // checkBox7
-            // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Enabled = false;
-            this.checkBox7.Location = new System.Drawing.Point(0, 85);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(15, 14);
-            this.checkBox7.TabIndex = 4;
-            this.checkBox7.UseVisualStyleBackColor = true;
-            // 
-            // checkBox8
-            // 
-            this.checkBox8.AutoSize = true;
-            this.checkBox8.Enabled = false;
-            this.checkBox8.Location = new System.Drawing.Point(0, 99);
-            this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(15, 14);
-            this.checkBox8.TabIndex = 4;
-            this.checkBox8.UseVisualStyleBackColor = true;
-            // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(469, 379);
+            this.label1.Location = new System.Drawing.Point(671, 378);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 13);
             this.label1.TabIndex = 5;
@@ -298,7 +295,7 @@
             // gbReproduccion
             // 
             this.gbReproduccion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.gbReproduccion.Controls.Add(this.button1);
+            this.gbReproduccion.Controls.Add(this.btnAvanzar);
             this.gbReproduccion.Controls.Add(this.label4);
             this.gbReproduccion.Controls.Add(this.trackBar1);
             this.gbReproduccion.Controls.Add(this.label3);
@@ -307,22 +304,35 @@
             this.gbReproduccion.Controls.Add(this.btnPlayPause);
             this.gbReproduccion.Controls.Add(this.btnGuardar);
             this.gbReproduccion.Controls.Add(this.btnAbrirArchivo);
-            this.gbReproduccion.Location = new System.Drawing.Point(249, 268);
+            this.gbReproduccion.Location = new System.Drawing.Point(368, 267);
             this.gbReproduccion.Name = "gbReproduccion";
-            this.gbReproduccion.Size = new System.Drawing.Size(220, 116);
+            this.gbReproduccion.Size = new System.Drawing.Size(225, 116);
             this.gbReproduccion.TabIndex = 6;
             this.gbReproduccion.TabStop = false;
             this.gbReproduccion.Text = "Reproduccion";
             // 
-            // button1
+            // btnAvanzarFinal
             // 
-            this.button1.Location = new System.Drawing.Point(113, 69);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 23);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Avanzar";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_2);
+            this.btnAvanzarFinal.Enabled = false;
+            this.btnAvanzarFinal.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAvanzarFinal.Location = new System.Drawing.Point(120, 75);
+            this.btnAvanzarFinal.Name = "btnAvanzarFinal";
+            this.btnAvanzarFinal.Size = new System.Drawing.Size(101, 34);
+            this.btnAvanzarFinal.TabIndex = 14;
+            this.btnAvanzarFinal.Text = "Avanzar hasta el final";
+            this.btnAvanzarFinal.UseVisualStyleBackColor = true;
+            this.btnAvanzarFinal.Click += new System.EventHandler(this.btnAvanzarFinal_Click);
+            // 
+            // btnAvanzar
+            // 
+            this.btnAvanzar.Enabled = false;
+            this.btnAvanzar.Location = new System.Drawing.Point(113, 70);
+            this.btnAvanzar.Name = "btnAvanzar";
+            this.btnAvanzar.Size = new System.Drawing.Size(101, 23);
+            this.btnAvanzar.TabIndex = 13;
+            this.btnAvanzar.Text = "Avanzar...";
+            this.btnAvanzar.UseVisualStyleBackColor = true;
+            this.btnAvanzar.Click += new System.EventHandler(this.button1_Click_2);
             // 
             // label4
             // 
@@ -336,14 +346,16 @@
             // trackBar1
             // 
             this.trackBar1.AutoSize = false;
+            this.trackBar1.Enabled = false;
             this.trackBar1.Location = new System.Drawing.Point(6, 86);
-            this.trackBar1.Maximum = 30;
-            this.trackBar1.Minimum = 1;
+            this.trackBar1.Maximum = 500;
+            this.trackBar1.Minimum = 100;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(104, 23);
             this.trackBar1.TabIndex = 11;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar1.Value = 10;
+            this.trackBar1.Value = 100;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // label3
             // 
@@ -357,7 +369,7 @@
             // lblTiempo
             // 
             this.lblTiempo.AutoSize = true;
-            this.lblTiempo.Location = new System.Drawing.Point(165, 95);
+            this.lblTiempo.Location = new System.Drawing.Point(110, 96);
             this.lblTiempo.Name = "lblTiempo";
             this.lblTiempo.Size = new System.Drawing.Size(49, 13);
             this.lblTiempo.TabIndex = 9;
@@ -386,42 +398,51 @@
             this.btnPlayPause.UseVisualStyleBackColor = true;
             this.btnPlayPause.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // panel1
+            // pictureBox1
             // 
-            this.panel1.Controls.Add(this.checkBox2);
-            this.panel1.Controls.Add(this.checkBox1);
-            this.panel1.Controls.Add(this.checkBox4);
-            this.panel1.Controls.Add(this.checkBox7);
-            this.panel1.Controls.Add(this.checkBox5);
-            this.panel1.Controls.Add(this.checkBox6);
-            this.panel1.Controls.Add(this.checkBox8);
-            this.panel1.Controls.Add(this.checkBox3);
-            this.panel1.Location = new System.Drawing.Point(475, 265);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(20, 116);
-            this.panel1.TabIndex = 11;
-            // 
-            // liveChart1
-            // 
-            this.liveChart1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.liveChart1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.liveChart1.Location = new System.Drawing.Point(12, 12);
-            this.liveChart1.MaximumSize = new System.Drawing.Size(1000, 250);
-            this.liveChart1.MinimumSize = new System.Drawing.Size(0, 250);
-            this.liveChart1.Name = "liveChart1";
-            this.liveChart1.RealTime = true;
-            this.liveChart1.Size = new System.Drawing.Size(497, 250);
-            this.liveChart1.TabIndex = 7;
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.SizeWE;
+            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(701, 247);
+            this.pictureBox1.TabIndex = 12;
+            this.pictureBox1.TabStop = false;
+            // 
+            // llblVersion
+            // 
+            this.llblVersion.ActiveLinkColor = System.Drawing.Color.Red;
+            this.llblVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.llblVersion.AutoSize = true;
+            this.llblVersion.Enabled = false;
+            this.llblVersion.LinkColor = System.Drawing.Color.Blue;
+            this.llblVersion.Location = new System.Drawing.Point(648, 365);
+            this.llblVersion.Name = "llblVersion";
+            this.llblVersion.Size = new System.Drawing.Size(78, 13);
+            this.llblVersion.TabIndex = 15;
+            this.llblVersion.TabStop = true;
+            this.llblVersion.Text = "Versión 1.0.0.0";
+            this.llblVersion.VisitedLinkColor = System.Drawing.Color.Blue;
+            this.llblVersion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llblVersion_LinkClicked);
+            // 
+            // btnActSerie
+            // 
+            this.btnActSerie.Location = new System.Drawing.Point(76, 18);
+            this.btnActSerie.Name = "btnActSerie";
+            this.btnActSerie.Size = new System.Drawing.Size(31, 23);
+            this.btnActSerie.TabIndex = 5;
+            this.btnActSerie.Text = "Act";
+            this.btnActSerie.UseVisualStyleBackColor = true;
+            this.btnActSerie.Click += new System.EventHandler(this.btnActSerie_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(523, 393);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.checkBox9);
-            this.Controls.Add(this.liveChart1);
+            this.ClientSize = new System.Drawing.Size(725, 392);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.llblVersion);
+            this.Controls.Add(this.chkTest);
             this.Controls.Add(this.gbReproduccion);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.gbPuerto);
@@ -431,14 +452,16 @@
             this.Text = "Analizador de Señales";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
+            this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             this.gbOpciones.ResumeLayout(false);
             this.gbOpciones.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudUpdateDelay)).EndInit();
             this.gbPuerto.ResumeLayout(false);
             this.gbReproduccion.ResumeLayout(false);
             this.gbReproduccion.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -453,21 +476,13 @@
         private System.Windows.Forms.Button btnAbrir;
         private System.Windows.Forms.Button btnConsola;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.CheckBox checkBox5;
-        private System.Windows.Forms.CheckBox checkBox6;
-        private System.Windows.Forms.CheckBox checkBox7;
-        private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnGuardar;
         private System.Windows.Forms.Button btnAbrirArchivo;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Button btnLimpiar;
-        private System.Windows.Forms.CheckBox checkBox9;
+        private System.Windows.Forms.CheckBox chkTest;
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.GroupBox gbReproduccion;
         private System.Windows.Forms.Button btnParar;
@@ -476,9 +491,17 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button1;
-        private LiveChart liveChart1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnAvanzar;
+        private System.Windows.Forms.Label lblRend;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown nudUpdateDelay;
+        private System.Windows.Forms.CheckBox chkLowUse;
+        private System.Windows.Forms.Button btnAvanzarFinal;
+        private System.Windows.Forms.LinkLabel llblVersion;
+        private System.Windows.Forms.Button btnActSerie;
     }
 }
 

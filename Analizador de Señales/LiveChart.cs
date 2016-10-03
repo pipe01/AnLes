@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Analizador_de_Señales
 {
@@ -18,7 +19,9 @@ namespace Analizador_de_Señales
             InitializeComponent();
         }
 
-        public int start, count, rendercount;
+        public int start, count, rendercount, offset;
+        public List<float> timesBetweenFrames = new List<float>();
+        public float perfomance = 0.0f;
         public double scale = 0.5f;
         public Series[] Series { get; private set; } = new Series[8];
         public bool RealTime { get; set; } = true;
@@ -38,12 +41,18 @@ namespace Analizador_de_Señales
         }
         private const int tileheight = 30;
 
+        private int maxtile
+        {
+            get { return this.Width / (tilewidth + 1); }
+        }
+
         private void LiveChart_Load(object sender, EventArgs e)
         {
+            Color c2 = addColor(Color.LightGray, 25);
              color1 = new SolidBrush(Color.LightGray);
-             color2 = new SolidBrush(addColor(Color.LightGray, 15, 15, 15));
-            hcolor1 = new SolidBrush(addColor(Color.LightGray, 25, 25, 25));
-            hcolor2 = new SolidBrush(addColor(Color.LightGray, 40, 40, 40));
+             color2 = new SolidBrush(c2);
+            hcolor1 = new SolidBrush(addColor(Color.LightGray, 15));
+            hcolor2 = new SolidBrush(addColor(c2, 15));
 
             for (int i = 0; i < 8; i++)
             {
@@ -83,48 +92,31 @@ namespace Analizador_de_Señales
             }
         }
 
-        private void ScrollOne(int step, bool addrender = true)
+        private void ScrollOne(int step, bool addrender = true, bool force = false)
         {
-            if (addrender)
-                rendercount -= step;
-            if (Animate)
-                Task.Run(() =>
-                {
-                    int max = tilewidth + 1;
-                    int pro = 0;
-                    Delegate d = (MethodInvoker)delegate
-                    {
-                        pro += step;
-                        picSeries.Left += step;
-                    };
-                    while (Math.Abs(pro) < max)
-                    {
-                        picSeries.Invoke(d);
-                        System.Threading.Thread.Sleep(2);
-                    }
-                });
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate { ScrollOne(step, addrender); });
+            }
             else
-                picSeries.Left += (tilewidth + 1) * step;
-            this.Refresh();
+            {
+                if (!(Series[0].values.Count > maxtile && !force))
+                {
+                    Console.WriteLine("scroll " + step);
+                    start += step;
+                    offset += step;
+                    this.Refresh();
+                }
+            }
         }
 
         private void Lseries_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            int precount = count;
             count = Series[0].values.Count;
-            var m = (MethodInvoker)delegate
-            {
-                picSeries.Width = (int)(count * (tilewidth + 1));
-            };
-
-            if (picSeries.InvokeRequired)
-            {
-                picSeries.Invoke(m);
-            }
-            else
-            {
-                m.Invoke();
-            }
             
+            start = count - maxtile;
+            ScrollOne(-1);
 
             if (watchcoll)
             {
@@ -134,15 +126,16 @@ namespace Analizador_de_Señales
 
         private void LiveChart_Paint(object sender, PaintEventArgs e)
         {
-            
+            Draw(e.Graphics);
         }
 
+        Stopwatch sw = new Stopwatch();
         public void Draw(Graphics g)
         {
-            Console.WriteLine(picSeries.Left);
-            int width = (int)(tilewidth);
-            //count = this.Width / width + 1;
-            bool highlighted = false;
+            sw.Restart();
+            rendercount = this.Width / (tilewidth + 1) + 1;
+
+            /*bool highlighted = false;
             if (Series.First().values.Any() && hoverIndex > -1)
             {
                 int si = mousePos.Y / (tileheight + 1);
@@ -150,15 +143,16 @@ namespace Analizador_de_Señales
                 {
                     highlighted = true;
                 }
-            }
+            }*/
 
-            int st = (Math.Abs(picSeries.Left) - this.Width) / (tilewidth - 1); 
+            int st = count - rendercount;
+            st = st < 0 ? 0 : st; 
 
             bool a = false;
             for (int vi = (st % 2 == 0 ? st : st - 1); vi < count && vi < start + rendercount; vi++)
             {
                 Brush b;
-                if (highlighted)
+                if (hoverIndex == vi)
                 {
                     b = a ? hcolor1 : hcolor2;
                 }
@@ -167,7 +161,7 @@ namespace Analizador_de_Señales
                     b = a ? color1 : color2;
                 }
                 a = !a;
-                g.FillRectangle(b, vi * (tilewidth + 1), 0, tilewidth, this.Height);
+                g.FillRectangle(b, (vi + offset) * (tilewidth + 1), 0, tilewidth, this.Height);
             }
 
             for (int i = 0; i < 8; i++)
@@ -178,15 +172,16 @@ namespace Analizador_de_Señales
                 Brush b = new SolidBrush(c);
                 Brush bh = new SolidBrush(addColor(c, 25, 25, 25));
 
-                for (int vi = st; vi < count && vi < start + rendercount; vi++)
+                //st = 0;
+                for (int vi = st; vi < count && vi < start + rendercount - 1; vi++)
                 {
-                    if (vi > start)
+                    if (vi > start && s.values.Count > 0) // && vi > s.values.Count
                     {
                         int relvi = vi - start;
                         if (s.values[vi])
                         {
                             //rects.Add(new Rectangle(relvi * (width + 1), i * (30 + 1), width, 30));
-                            g.FillRectangle(vi == hoverIndex ? bh : b, new RectangleF(vi * (width + 1), i * (tileheight + 1), width, tileheight));
+                            g.FillRectangle(vi == hoverIndex ? bh : b, new RectangleF(vi * (tilewidth + 1), i * (tileheight + 1), tilewidth, tileheight));
                         }
                     }
                 }
@@ -197,12 +192,14 @@ namespace Analizador_de_Señales
             if (Series.First().values.Any() && hoverIndex > -1)
             {
                 int si = mousePos.Y / (tileheight + 1);
-                if (si < 8)
+                if (si < 8 && Series[si].times.Any())
                 {
                     g.DrawString(Series[si].times[hoverIndex > Series[si].times.Count ? 0 : hoverIndex].ToString(@"hh\:mm\:ss"),
                         this.Font, Brushes.Black, Point.Add(mousePos, new Size(3, 4)));
                 }
             }
+            timesBetweenFrames.Add((sw.ElapsedTicks * (1f / 10000000)) * 1000f);
+            sw.Reset();
         }
 
         public void Clear()
@@ -210,9 +207,6 @@ namespace Analizador_de_Señales
             count = 0;
             rendercount = 0;
             start = 0;
-
-            picSeries.Left = 0;
-            picSeries.Width = this.Width;
 
             //Clear series
             Task.Run(() =>
@@ -236,26 +230,16 @@ namespace Analizador_de_Señales
 
             return Color.FromArgb(c.A, nr, ng, nb);
         }
-
-        private void LiveChart_MouseDown(object sender, MouseEventArgs e)
+        private Color addColor(Color c, int all)
         {
-            if (e.Button == MouseButtons.Middle)
-            {
-                ScrollToEnd();
-            }
+            return addColor(c, all, all, all);
         }
 
-        private void picSeries_Paint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-            if (watchcoll)
-                Draw(g);
-        }
 
         private Point startP;
         private bool drag;
         private int acum;
-        private void picSeries_MouseDown(object sender, MouseEventArgs e)
+        private void LiveChart_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -284,7 +268,8 @@ namespace Analizador_de_Señales
             if (drag)
             {
                 int diff = e.Location.X - startP.X;
-                picSeries.Left += diff;
+                int step = diff / (tilewidth + 1);
+                start += step;
                 acum += diff;
 
                 if (!RealTime)
@@ -301,8 +286,8 @@ namespace Analizador_de_Señales
                     }
                 }
             }
-            else if (e.Button == MouseButtons.None)
-            {
+            //else if (e.Button == MouseButtons.None)
+            //{
                 hoverIndex = e.X / (tilewidth + 1);
                 if (hoverIndex > Series.First().values.Count - 1)
                     hoverIndex = -1;
@@ -311,7 +296,7 @@ namespace Analizador_de_Señales
 
                 this.Refresh();
 
-            }
+            //}
         }
 
         private void picSeries_MouseUp(object sender, MouseEventArgs e)
@@ -331,6 +316,25 @@ namespace Analizador_de_Señales
             
         }
 
+        private void timerPerf_Tick(object sender, EventArgs e)
+        {
+            if (timesBetweenFrames.Count > 0)
+            {
+                perfomance = Average(timesBetweenFrames.ToArray());
+                timesBetweenFrames.Clear();
+            }
+        }
+
+        private float Average(params float[] values)
+        {
+            float total = 0.0f;
+            for (int i = 0; i < values.Length; i++)
+            {
+                total += values[i];
+            }
+            return total / values.Length;
+        }
+
         private Color RandomColor()
         {
             return Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
@@ -338,7 +342,7 @@ namespace Analizador_de_Señales
 
         public void ScrollToEnd()
         {
-            picSeries.Left = Series[0].values.Count * -(tilewidth + 1) + this.Width;
+            start = count - maxtile + 1;
         }
 
         public void AddOneSeries(TimeSpan elapsed, bool scroll = true)
@@ -357,7 +361,7 @@ namespace Analizador_de_Señales
             rendercount++;
             watchcoll = true;
 
-            if (scroll && picSeries.Width + picSeries.Left >= this.Width)
+            if (scroll && start + count > maxtile)
                 ScrollOne(-1);
         }
         public void AddOneSeries(bool on, int snum, TimeSpan elapsed, bool scroll = true)
@@ -373,7 +377,7 @@ namespace Analizador_de_Señales
             rendercount++;
             watchcoll = true;
 
-            if (scroll && picSeries.Width + picSeries.Left >= this.Width)
+            if (scroll && start + count > maxtile)
                 ScrollOne(-1);
         }
         public void AddOneSeries(bool[] state, TimeSpan elapsed, bool scroll = true)
@@ -387,7 +391,7 @@ namespace Analizador_de_Señales
             rendercount++;
             watchcoll = true;
 
-            if (scroll && picSeries.Width + picSeries.Left >= this.Width)
+            if (scroll && start + count > maxtile)
                 ScrollOne(-1);
         }
     }
