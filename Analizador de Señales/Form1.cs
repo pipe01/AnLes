@@ -228,6 +228,7 @@ namespace Analizador_de_Señales
                     cbPort.Enabled = true;
                     chkTest.Enabled = true;
                     chkTest.Checked = false;
+                    btnAvanzarFinal.Enabled = false;
                     break;
                 case State.RealInputRunning:
                     btnAbrir.Enabled = false;
@@ -237,6 +238,7 @@ namespace Analizador_de_Señales
                     btnLimpiar.Enabled = false;
                     gbReproduccion.Enabled = false;
                     cbPort.Enabled = false;
+                    btnAvanzarFinal.Enabled = true;
                     break;
                 case State.ReproductionRunning:
                     gbPuerto.Enabled = false;
@@ -246,6 +248,7 @@ namespace Analizador_de_Señales
                     gbReproduccion.Enabled = true;
                     chkTest.Checked = false;
                     chkTest.Enabled = false;
+                    btnAvanzarFinal.Enabled = true;
                     break;
                 case State.RealInputClosed:
                     gbReproduccion.Enabled = true;
@@ -253,23 +256,11 @@ namespace Analizador_de_Señales
                     btnParar.Enabled = false;
                     btnAbrirArchivo.Enabled = true;
                     btnGuardar.Enabled = true;
+                    btnAvanzarFinal.Enabled = true;
                     break;
                 default:
                     break;
             }
-        }
-
-        private void AddPoint(int series, int on)
-        {
-            /*int y = GetYAxis(series, on);
-            tbScale.Invoke((MethodInvoker)delegate 
-            {
-                tbScale.Series[series].Points.AddXY(startTime.Add(GetElapsed()), y);
-            });*/
-            /*liveChart1.Invoke((MethodInvoker)delegate
-            {
-                liveChart1.AddOneSeries(on == 1, series, elapsed.Elapsed);
-            });*/
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -408,6 +399,7 @@ namespace Analizador_de_Señales
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
             ClearChart();
+            ChangeState(State.Default);
         }
 
         private int pro = 0;
@@ -501,16 +493,23 @@ namespace Analizador_de_Señales
 
         private void btnAvanzarFinal_Click(object sender, EventArgs e)
         {
-            SerieValue[] small = new SerieValue[8];
-            for (int i = 0; i < reprTokens.Length; i++)
+            if (reproducing)
             {
-                var item = reprTokens[i];
-                small[item.num1 - 1] = new SerieValue(item.num2 == 1, item.time);
-                game.AddTiles(small);
+                SerieValue[] small = new SerieValue[8];
+                for (int i = 0; i < reprTokens.Length; i++)
+                {
+                    var item = reprTokens[i];
+                    small[item.num1 - 1] = new SerieValue(item.num2 == 1, item.time);
+                    game.AddTiles(small);
+                }
+                elapsed.Offset = endTime - TimeSpan.FromSeconds(1);
+                game.Running = false;
+                game.ScrollToEnd();
             }
-            elapsed.Offset = endTime - TimeSpan.FromSeconds(1);
-            game.Running = false;
-            game.ScrollToEnd();
+            else if (game.Series.Count > 0)
+            {
+                game.ScrollToEnd();
+            }
         }
 
         private void llblVersion_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

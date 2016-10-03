@@ -74,7 +74,7 @@
             // gbOpciones
             // 
             this.gbOpciones.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.gbOpciones.Controls.Add(this.llblVersion);
+            this.gbOpciones.Controls.Add(this.btnAvanzarFinal);
             this.gbOpciones.Controls.Add(this.chkLowUse);
             this.gbOpciones.Controls.Add(this.label6);
             this.gbOpciones.Controls.Add(this.label5);
@@ -95,18 +95,18 @@
             // chkLowUse
             // 
             this.chkLowUse.AutoSize = true;
-            this.chkLowUse.Location = new System.Drawing.Point(125, 55);
+            this.chkLowUse.Location = new System.Drawing.Point(108, 54);
             this.chkLowUse.Name = "chkLowUse";
-            this.chkLowUse.Size = new System.Drawing.Size(76, 30);
+            this.chkLowUse.Size = new System.Drawing.Size(122, 17);
             this.chkLowUse.TabIndex = 13;
-            this.chkLowUse.Text = "Modo bajo\r\nconsumo";
+            this.chkLowUse.Text = "Modo bajo consumo";
             this.chkLowUse.UseVisualStyleBackColor = true;
             this.chkLowUse.CheckedChanged += new System.EventHandler(this.chkLowUse_CheckedChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(201, 34);
+            this.label6.Location = new System.Drawing.Point(201, 32);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(20, 13);
             this.label6.TabIndex = 14;
@@ -115,7 +115,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(121, 13);
+            this.label5.Location = new System.Drawing.Point(121, 11);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(83, 13);
             this.label5.TabIndex = 13;
@@ -123,7 +123,7 @@
             // 
             // nudUpdateDelay
             // 
-            this.nudUpdateDelay.Location = new System.Drawing.Point(125, 29);
+            this.nudUpdateDelay.Location = new System.Drawing.Point(125, 27);
             this.nudUpdateDelay.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -295,7 +295,6 @@
             // gbReproduccion
             // 
             this.gbReproduccion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.gbReproduccion.Controls.Add(this.btnAvanzarFinal);
             this.gbReproduccion.Controls.Add(this.btnAvanzar);
             this.gbReproduccion.Controls.Add(this.label4);
             this.gbReproduccion.Controls.Add(this.trackBar1);
@@ -307,15 +306,16 @@
             this.gbReproduccion.Controls.Add(this.btnAbrirArchivo);
             this.gbReproduccion.Location = new System.Drawing.Point(368, 267);
             this.gbReproduccion.Name = "gbReproduccion";
-            this.gbReproduccion.Size = new System.Drawing.Size(329, 116);
+            this.gbReproduccion.Size = new System.Drawing.Size(225, 116);
             this.gbReproduccion.TabIndex = 6;
             this.gbReproduccion.TabStop = false;
             this.gbReproduccion.Text = "Reproduccion";
             // 
             // btnAvanzarFinal
             // 
+            this.btnAvanzarFinal.Enabled = false;
             this.btnAvanzarFinal.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAvanzarFinal.Location = new System.Drawing.Point(220, 20);
+            this.btnAvanzarFinal.Location = new System.Drawing.Point(120, 75);
             this.btnAvanzarFinal.Name = "btnAvanzarFinal";
             this.btnAvanzarFinal.Size = new System.Drawing.Size(101, 34);
             this.btnAvanzarFinal.TabIndex = 14;
@@ -412,9 +412,11 @@
             // llblVersion
             // 
             this.llblVersion.ActiveLinkColor = System.Drawing.Color.Red;
+            this.llblVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.llblVersion.AutoSize = true;
+            this.llblVersion.Enabled = false;
             this.llblVersion.LinkColor = System.Drawing.Color.Blue;
-            this.llblVersion.Location = new System.Drawing.Point(125, 91);
+            this.llblVersion.Location = new System.Drawing.Point(648, 365);
             this.llblVersion.Name = "llblVersion";
             this.llblVersion.Size = new System.Drawing.Size(78, 13);
             this.llblVersion.TabIndex = 15;
@@ -439,6 +441,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 392);
             this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.llblVersion);
             this.Controls.Add(this.chkTest);
             this.Controls.Add(this.gbReproduccion);
             this.Controls.Add(this.label1);
