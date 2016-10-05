@@ -51,7 +51,7 @@ namespace Analizador_de_Señales
         private TimeSpan elOffset = TimeSpan.Zero;
         private System.Timers.Timer timerMain;
         private int[] seriesChanges = new int[2];
-        private Game game;
+        public Game game;
 
 
         private float TimeScale
@@ -73,6 +73,16 @@ namespace Analizador_de_Señales
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            game = new Game();
+            game.UpdateInterval = (int)nudUpdateDelay.Value;
+            game.Load += () =>
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.Enabled = true;
+                });
+            };
+
             AutoUpdater.CurrentCulture = System.Globalization.CultureInfo.CurrentCulture;
             llblVersion.Text = "Versión " + Program.CurrentVersion;
             CheckUpdates();
@@ -83,9 +93,6 @@ namespace Analizador_de_Señales
             timerMain = new System.Timers.Timer();
             timerMain.Interval = 500;
             timerMain.Elapsed += timerMain_Tick;
-
-            game = new Game();
-            game.UpdateInterval = (int)nudUpdateDelay.Value;
 
             chkTest.Visible = Program.Debug;
         }
@@ -268,6 +275,8 @@ namespace Analizador_de_Señales
             if (Program.serialPort.IsOpen)
                 Program.serialPort.Close();
             game.Close();
+            Environment.Exit(0);
+            Application.Exit();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -521,6 +530,11 @@ namespace Analizador_de_Señales
         {
             cbPort.Items.Clear();
             cbPort.Items.AddRange(SerialPort.GetPortNames());
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Console.WriteLine("Exit form");
         }
     }
 

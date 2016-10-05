@@ -49,23 +49,12 @@ namespace Analizador_de_Señales
             
             serialPort = new SerialPort();
 
-            bool loop = true;
-
-            /*Task.Run(() => 
-            {
-                while (loop)
-                {
-                    string input = Console.ReadLine();
-                    Console.WriteLine(">" + input);
-                }
-            });*/
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             form1 = new Form1();
             Application.Run(form1);
 
-            loop = false;
+            form1.game.Close();
         }
 
         public static void ToggleConsole()

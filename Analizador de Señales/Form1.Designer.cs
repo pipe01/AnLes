@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.gbOpciones = new System.Windows.Forms.GroupBox();
+            this.btnAvanzarFinal = new System.Windows.Forms.Button();
             this.chkLowUse = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -44,6 +45,7 @@
             this.btnAbrirArchivo = new System.Windows.Forms.Button();
             this.cbPort = new System.Windows.Forms.ComboBox();
             this.gbPuerto = new System.Windows.Forms.GroupBox();
+            this.btnActSerie = new System.Windows.Forms.Button();
             this.btnCerrar = new System.Windows.Forms.Button();
             this.btnAbrir = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -52,7 +54,6 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.gbReproduccion = new System.Windows.Forms.GroupBox();
-            this.btnAvanzarFinal = new System.Windows.Forms.Button();
             this.btnAvanzar = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
@@ -62,7 +63,6 @@
             this.btnPlayPause = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.llblVersion = new System.Windows.Forms.LinkLabel();
-            this.btnActSerie = new System.Windows.Forms.Button();
             this.gbOpciones.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpdateDelay)).BeginInit();
             this.gbPuerto.SuspendLayout();
@@ -91,6 +91,18 @@
             this.gbOpciones.TabStop = false;
             this.gbOpciones.Text = "Opciones";
             this.gbOpciones.Enter += new System.EventHandler(this.gbOpciones_Enter);
+            // 
+            // btnAvanzarFinal
+            // 
+            this.btnAvanzarFinal.Enabled = false;
+            this.btnAvanzarFinal.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAvanzarFinal.Location = new System.Drawing.Point(120, 75);
+            this.btnAvanzarFinal.Name = "btnAvanzarFinal";
+            this.btnAvanzarFinal.Size = new System.Drawing.Size(101, 34);
+            this.btnAvanzarFinal.TabIndex = 14;
+            this.btnAvanzarFinal.Text = "Avanzar hasta el final";
+            this.btnAvanzarFinal.UseVisualStyleBackColor = true;
+            this.btnAvanzarFinal.Click += new System.EventHandler(this.btnAvanzarFinal_Click);
             // 
             // chkLowUse
             // 
@@ -251,6 +263,16 @@
             this.gbPuerto.TabStop = false;
             this.gbPuerto.Text = "Puerto serie";
             // 
+            // btnActSerie
+            // 
+            this.btnActSerie.Location = new System.Drawing.Point(76, 18);
+            this.btnActSerie.Name = "btnActSerie";
+            this.btnActSerie.Size = new System.Drawing.Size(31, 23);
+            this.btnActSerie.TabIndex = 5;
+            this.btnActSerie.Text = "Act";
+            this.btnActSerie.UseVisualStyleBackColor = true;
+            this.btnActSerie.Click += new System.EventHandler(this.btnActSerie_Click);
+            // 
             // btnCerrar
             // 
             this.btnCerrar.Enabled = false;
@@ -310,18 +332,6 @@
             this.gbReproduccion.TabIndex = 6;
             this.gbReproduccion.TabStop = false;
             this.gbReproduccion.Text = "Reproduccion";
-            // 
-            // btnAvanzarFinal
-            // 
-            this.btnAvanzarFinal.Enabled = false;
-            this.btnAvanzarFinal.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAvanzarFinal.Location = new System.Drawing.Point(120, 75);
-            this.btnAvanzarFinal.Name = "btnAvanzarFinal";
-            this.btnAvanzarFinal.Size = new System.Drawing.Size(101, 34);
-            this.btnAvanzarFinal.TabIndex = 14;
-            this.btnAvanzarFinal.Text = "Avanzar hasta el final";
-            this.btnAvanzarFinal.UseVisualStyleBackColor = true;
-            this.btnAvanzarFinal.Click += new System.EventHandler(this.btnAvanzarFinal_Click);
             // 
             // btnAvanzar
             // 
@@ -425,16 +435,6 @@
             this.llblVersion.VisitedLinkColor = System.Drawing.Color.Blue;
             this.llblVersion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llblVersion_LinkClicked);
             // 
-            // btnActSerie
-            // 
-            this.btnActSerie.Location = new System.Drawing.Point(76, 18);
-            this.btnActSerie.Name = "btnActSerie";
-            this.btnActSerie.Size = new System.Drawing.Size(31, 23);
-            this.btnActSerie.TabIndex = 5;
-            this.btnActSerie.Text = "Act";
-            this.btnActSerie.UseVisualStyleBackColor = true;
-            this.btnActSerie.Click += new System.EventHandler(this.btnActSerie_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -448,9 +448,11 @@
             this.Controls.Add(this.gbPuerto);
             this.Controls.Add(this.gbOpciones);
             this.DoubleBuffered = true;
+            this.Enabled = false;
             this.Name = "Form1";
             this.Text = "Analizador de Señales";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);

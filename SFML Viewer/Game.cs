@@ -74,6 +74,14 @@ namespace SFML_Viewer
         public int UpdateInterval;
         #endregion
 
+        public delegate void LoadDelegate();
+        public event LoadDelegate Load;
+        private void OnLoad()
+        {
+            if (Load != null)
+                Load();
+        }
+
         public void Start(IntPtr containerHandle)
         {
             //System.Runtime.GCSettings.LatencyMode = System.Runtime.GCLatencyMode.SustainedLowLatency;
@@ -86,6 +94,7 @@ namespace SFML_Viewer
                 {
                     GameLoop();
                 }
+                Console.WriteLine("Exit game");
             });
         }
 
@@ -133,6 +142,8 @@ namespace SFML_Viewer
             brect = new RectangleShape(new Vector2f(TileWidth, v.Size.Y));
 
             rect = new RectangleShape(new Vector2f(TileWidth, TileHeight));
+
+            OnLoad();
         }
 
         private void GameLoop()
