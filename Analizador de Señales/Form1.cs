@@ -536,6 +536,11 @@ namespace Analizador_de_Señales
         {
             Console.WriteLine("Exit form");
         }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            game.ZoomScale = (float)numericUpDown1.Value;
+        }
     }
 
     public class MStopwatch : Stopwatch

@@ -32,8 +32,9 @@ namespace SFML_Viewer
         private RectangleShape brect;
         private RectangleShape rect;
         private bool Exit = false;
+        private float zoomScale = 1.0f;
 
-        private int maxTiles { get { return (int)(window.GetView().Size.X / (TileWidth + 1)) + 2; } }
+        private int maxTiles { get { return (int)(window.GetView().Size.X / (IntTileWidth + 1)) + 2; } }
 
         private int visibleTileCount
         {
@@ -50,9 +51,11 @@ namespace SFML_Viewer
         {
             get
             {
-                return (int)((v.Center.X - v.Size.X / 2) / (TileWidth + 1f)); // + 1f);
+                return (int)((v.Center.X - v.Size.X / 2) / (IntTileWidth + 1f)); // + 1f);
             }
         }
+
+        private float IntTileWidth { get { return TileWidth * ZoomScale; } }
         #endregion
 
         #region Public properties
@@ -70,6 +73,15 @@ namespace SFML_Viewer
         public float ScrollStep { get; set; } = 2f;
 
         public float FPS { get { return 1000f / deltaTime; } }
+
+        public float ZoomScale {
+            get { return zoomScale; }
+            set {
+                zoomScale = value;
+                brect = new RectangleShape(new Vector2f(IntTileWidth, v.Size.Y));
+                rect = new RectangleShape(new Vector2f(IntTileWidth, TileHeight));
+            }
+        }
 
         public int UpdateInterval;
         #endregion
@@ -139,9 +151,9 @@ namespace SFML_Viewer
             startRect.FillColor = Color.White;
             startRect.Position = new Vector2f(-TileWidth - 1, 0);
 
-            brect = new RectangleShape(new Vector2f(TileWidth, v.Size.Y));
+            brect = new RectangleShape(new Vector2f(IntTileWidth, v.Size.Y));
 
-            rect = new RectangleShape(new Vector2f(TileWidth, TileHeight));
+            rect = new RectangleShape(new Vector2f(IntTileWidth, TileHeight));
 
             OnLoad();
         }
@@ -161,7 +173,7 @@ namespace SFML_Viewer
 
             window.Clear(windowColor);
 
-            int hoverIndex = (int)(mousePos.X / (TileWidth + 1));
+            int hoverIndex = (int)(mousePos.X / (IntTileWidth + 1));
             bool hover = mousePos.X >= 0 && mousePos.X <= window.Size.X && mousePos.Y >= 0 && mousePos.Y <= window.Size.Y;
 
             window.Draw(startRect);
@@ -171,7 +183,7 @@ namespace SFML_Viewer
             {
                 Color prev = even ? EvenColor : OddColor;
                 brect.FillColor = i == hoverIndex && hover ? HighColor : prev;
-                brect.Position = new Vector2f(i * (TileWidth + 1), 0);
+                brect.Position = new Vector2f(i * (IntTileWidth + 1), 0);
                 window.Draw(brect);
                 even = !even;
             }
@@ -185,9 +197,9 @@ namespace SFML_Viewer
                 {
                     if (d >= 0 && cur.Count > d)
                     {
-                        rect.Position = new Vector2f(d * (TileWidth + 1), y);
+                        rect.Position = new Vector2f(d * (IntTileWidth + 1), y);
 
-                        if (d == hoverIndex)
+                        if (d == hoverIndex && hover)
                             rect.FillColor = cur.TileColorHL;
                         else
                             rect.FillColor = cur.TileColor;
@@ -205,12 +217,13 @@ namespace SFML_Viewer
             
             if (Running && visibleTileCount >= maxTiles)
             {
-                float step = (float)((TileWidth + 1) / ((double)UpdateInterval / deltaTime));
+                float step = (float)((IntTileWidth + 1) / ((double)UpdateInterval / deltaTime));
                 MoveView(step);
             }
 
             window.Display();
         }
+
 
         public void SetLowUsage(bool on)
         {

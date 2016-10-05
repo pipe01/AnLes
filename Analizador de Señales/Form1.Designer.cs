@@ -63,12 +63,14 @@
             this.btnPlayPause = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.llblVersion = new System.Windows.Forms.LinkLabel();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.gbOpciones.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpdateDelay)).BeginInit();
             this.gbPuerto.SuspendLayout();
             this.gbReproduccion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // gbOpciones
@@ -435,11 +437,41 @@
             this.llblVersion.VisitedLinkColor = System.Drawing.Color.Blue;
             this.llblVersion.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llblVersion_LinkClicked);
             // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.DecimalPlaces = 1;
+            this.numericUpDown1.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDown1.Location = new System.Drawing.Point(611, 288);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(70, 20);
+            this.numericUpDown1.TabIndex = 16;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 392);
+            this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.llblVersion);
             this.Controls.Add(this.chkTest);
@@ -464,6 +496,7 @@
             this.gbReproduccion.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -504,6 +537,7 @@
         private System.Windows.Forms.Button btnAvanzarFinal;
         private System.Windows.Forms.LinkLabel llblVersion;
         private System.Windows.Forms.Button btnActSerie;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
     }
 }
 
