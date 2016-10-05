@@ -241,7 +241,6 @@ namespace SFML_Viewer
                 }
                 s.Dispose();
             }
-
             window.Display();
         }
 
