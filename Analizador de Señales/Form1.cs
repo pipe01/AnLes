@@ -471,6 +471,7 @@ namespace Analizador_de_Señales
         {
             game.Start(pictureBox1.Handle);
             ChangeState(State.Default);
+            this.Activate();
         }
 
         private void gbOpciones_Enter(object sender, EventArgs e)
@@ -535,11 +536,6 @@ namespace Analizador_de_Señales
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Console.WriteLine("Exit form");
-        }
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-            game.ZoomScale = (float)numericUpDown1.Value;
         }
     }
 

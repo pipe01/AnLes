@@ -123,6 +123,7 @@ namespace SFML_Viewer
             window.MouseMoved += Window_MouseMoved;
             window.MouseButtonPressed += Window_MouseButtonPressed;
             window.MouseButtonReleased += Window_MouseButtonReleased;
+            window.MouseWheelMoved += Window_MouseWheelMoved;
             window.SetActive(false);
 
             lastSize = window.Size;
@@ -155,7 +156,14 @@ namespace SFML_Viewer
 
             rect = new RectangleShape(new Vector2f(IntTileWidth, TileHeight));
 
+            SetLowUsage(true);
+
             OnLoad();
+        }
+
+        private void Window_MouseWheelMoved(object sender, MouseWheelEventArgs e)
+        {
+            ZoomScale += e.Delta * 0.1f;
         }
 
         private void GameLoop()
@@ -221,6 +229,19 @@ namespace SFML_Viewer
                 MoveView(step);
             }
 
+            if (firstVisibleIndex > Series.Count - 1)
+            {
+                CircleShape s = new CircleShape(10, 3);
+                s.FillColor = Color.Black;
+                s.Rotation = 270;
+                for (int i = 0; i < 2; i++)
+                {
+                    s.Position = new Vector2f(v.Center.X - window.Size.X / 2 + 15, (window.Size.Y / 4) * (i == 0 ? 1 : 3));
+                    window.Draw(s);
+                }
+                s.Dispose();
+            }
+
             window.Display();
         }
 
@@ -240,7 +261,7 @@ namespace SFML_Viewer
         public void ScrollToEnd()
         {
             v = window.GetView();
-            v.Center = GetWindowCenter() + new Vector2f((Series[0].Count - maxTiles / 2) * (TileWidth + 1), 0);
+            v.Center = GetWindowCenter() + new Vector2f((Series[0].Count - maxTiles / 2) * (IntTileWidth + 1), 0);
             window.SetView(v);
         }
 
